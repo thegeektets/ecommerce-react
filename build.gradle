@@ -1,0 +1,66 @@
+plugins {
+    id 'base' // Core Gradle plugin
+    id 'com.github.node-gradle.node' version '3.5.1' // Node.js plugin
+}
+
+node {
+    version = '19.1.0' // Specify the Node.js version compatible with your dependencies
+    yarnVersion = '1.22.22' // Yarn version
+    download = false // Use system-installed Node.js and Yarn (if you want Gradle to download, set this to true)
+}
+
+buildScan {
+    publishAlways() // This will always publish the build scan
+    tag('frontend-engineer')
+    description = 'Frontend Engineer Build Scan for OSS Project'
+}
+
+
+task installDependencies {
+    description = "Install project dependencies using Yarn"
+    group = "Build Setup"
+    doLast {
+        exec {
+            workingDir = file('.')  // Set the working directory to the project root
+            commandLine 'yarn', 'install'  // Run Yarn install command
+        }
+    }
+}
+
+task devServer {
+    description = "Run the development server with Vite"
+    group = "Development"
+    doLast {
+        exec {
+            workingDir = file('.')  // Point to your React app directory
+            commandLine 'yarn', 'dev'  // Run 'yarn dev' to start the development server
+        }
+    }
+}
+
+task buildFrontend {
+    description = "Build the frontend for production using Vite"
+    group = "Build"
+    doLast {
+        exec {
+            workingDir = file('.')  // Point to your React app directory
+            commandLine 'yarn', 'build'  // Run 'yarn build' for production build
+        }
+    }
+}
+
+task serveFrontend {
+    description = "Preview the production build using Vite"
+    group = "Serve"
+    doLast {
+        exec {
+            workingDir = file('.')  // Point to your React app directory
+            commandLine 'yarn', 'serve'  // Run 'yarn serve' to preview the production build
+        }
+    }
+}
+
+
+
+// Define build dependencies
+build.dependsOn installDependencies, buildFrontend
